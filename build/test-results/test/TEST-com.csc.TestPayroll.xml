@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.csc.TestPayroll" tests="10" skipped="0" failures="0" errors="0" timestamp="2024-09-09T05:30:37" hostname="WIN-VE0J3PDRJ34" time="0.06">
+  <properties/>
+  <testcase name="testCalculateStateTax()" classname="com.csc.TestPayroll" time="0.021"/>
+  <testcase name="testCalculateInsuranceWithLessThan3Dependents()" classname="com.csc.TestPayroll" time="0.001"/>
+  <testcase name="testCalculateNetPay()" classname="com.csc.TestPayroll" time="0.002"/>
+  <testcase name="testCalculateTotalDeductionsWith2Dependents()" classname="com.csc.TestPayroll" time="0.002"/>
+  <testcase name="testCalculateGrossPayWithoutOvertime()" classname="com.csc.TestPayroll" time="0.002"/>
+  <testcase name="testCalculateSocialSecurity()" classname="com.csc.TestPayroll" time="0.001"/>
+  <testcase name="testCalculateInsuranceWith3OrMore()" classname="com.csc.TestPayroll" time="0.003"/>
+  <testcase name="testCalculateGrossPayWithOvertime()" classname="com.csc.TestPayroll" time="0.001"/>
+  <testcase name="testCalculateTotalDeductionsWith3Dependents()" classname="com.csc.TestPayroll" time="0.002"/>
+  <testcase name="testCalculateFederalTax()" classname="com.csc.TestPayroll" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

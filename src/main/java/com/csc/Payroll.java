@@ -4,8 +4,6 @@ import java.util.Scanner;
 
 public class Payroll {
   private static final int HOURS = 40;
-  private static final double HOURLY_RATE = 16.78;
-  private static final double OVERTIME_RATE = HOURLY_RATE * 1.5;
   private static final double SOCIAL_SECURITY_TAX = 0.06;
   private static final double FEDERAL_TAX = 0.14;
   private static final double STATE_TAX = 0.05;
@@ -14,13 +12,14 @@ public class Payroll {
   private static final double INSURANCE_2_MINUS = 15.00;
 
 
-  public static double calculateGrossPay(double hoursWorked){
+  public static double calculateGrossPay(double hoursWorked, double hourlyRate){
+      double overtimeRate = hourlyRate * 1.5;
       if(hoursWorked > HOURS){
           double overtimeHours = hoursWorked - HOURS;
-          return (HOURS * HOURLY_RATE) + (overtimeHours * OVERTIME_RATE);
+          return (HOURS * hourlyRate) + (overtimeHours * overtimeRate);
       }
       else{
-          return hoursWorked * HOURLY_RATE;
+          return hoursWorked * hourlyRate;
       }
   }
 
@@ -49,14 +48,12 @@ public class Payroll {
       }
   }
 
-  public static double calculateTotalDeductions(double grossPay, int dependents){
-      double socialSecurity = calculateSocialSecurity(grossPay);
-      double federalTax = calculateFederalTax(grossPay);
-      double stateTax = calculateStateTax(grossPay);
-      double unionDeduction = calculateUnionDeduction();
-      double insurance = calculateInsurance(dependents);
+  public static double calculateRequiredDeductions(double grossPay){
+      return calculateSocialSecurity(grossPay) + calculateFederalTax(grossPay) + calculateStateTax(grossPay);
+  }
 
-      return socialSecurity + federalTax + stateTax + unionDeduction + insurance;
+  public static double calculateTotalDeductions(double grossPay, int dependents){
+      return calculateRequiredDeductions(grossPay) + calculateUnionDeduction() + calculateInsurance(dependents);
   }
 
   public static double calculateNetPay(double grossPay, double totalDeductions){
@@ -71,25 +68,52 @@ public class Payroll {
       System.out.print("How many hours did you work this week? ");
       double hoursWorked = scanner.nextDouble();
 
+      double hourlyRate = -1;
+      while(hourlyRate < 0){
+          System.out.print("What is your hourly pay rate? ");
+          hourlyRate = scanner.nextDouble();
+          if(hourlyRate < 0){
+              System.out.println("Pay rate cannot be negative, please enter a positive value.");
+          }
+      }
+
       System.out.print("How many children do you have? ");
       int dependents = scanner.nextInt();
+      if (dependents < 0){
+          dependents = 0;
+      }
 
-      double grossPay = Payroll.calculateGrossPay(hoursWorked);
+      double grossPay = Payroll.calculateGrossPay(hoursWorked, hourlyRate);
 
-      double totalDeductions = Payroll.calculateTotalDeductions(grossPay, dependents);
-
-      double netPay = Payroll.calculateNetPay(grossPay, totalDeductions);
+      double requiredDeductions = Payroll.calculateRequiredDeductions(grossPay);
+      double unionDeduction = Payroll.calculateUnionDeduction();
+      double insurance = Payroll.calculateInsurance(dependents);
+      double netPayBeforeUnionInsurance = grossPay - requiredDeductions;
 
       System.out.println("\nPayroll Stub:");
       System.out.printf("Hours: %.1f%n", hoursWorked);
-      System.out.printf("Rate: $%.2f/hr%n", 16.78);
+      System.out.printf("Rate: $%.2f/hr%n", hourlyRate);
       System.out.printf("Gross: $%.2f%n", grossPay);
       System.out.printf("SocSec: $%.2f%n",Payroll.calculateSocialSecurity(grossPay));
       System.out.printf("FedTax: $%.2f%n", Payroll.calculateFederalTax(grossPay));
       System.out.printf("StTax: $%.2f%n", Payroll.calculateStateTax(grossPay));
-      System.out.printf("Union: $%.2f%n", Payroll.calculateUnionDeduction());
-      System.out.printf("Ins: $%.2f%n", Payroll.calculateInsurance(dependents));
-      System.out.printf("Net: $%.2f%n", netPay);
+
+      if(netPayBeforeUnionInsurance >= (unionDeduction + insurance)){
+          double totalDeductions = requiredDeductions + unionDeduction + insurance;
+          double netPay = grossPay - totalDeductions;
+
+          System.out.printf("Union: $%.2f%n", unionDeduction);
+          System.out.printf("Ins: $%.2f%n", insurance);
+          System.out.printf("Net: $%.2f%n", netPay);
+      }
+      else{
+          double netPay = netPayBeforeUnionInsurance;
+
+          System.out.printf("Net: $%.2f%n", netPay);
+          System.out.println("\nThe employee still owes:");
+          System.out.printf("Union: $%.2f%n", unionDeduction);
+          System.out.printf("Ins: $%.2f%n", insurance);
+      }
 
       System.out.println("\n Thank you for using my Payroll Program!");
 
